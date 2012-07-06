@@ -9,7 +9,7 @@
 	{% for c in page.comments %}
 		<div class="comment {% cycle 'odd', 'even' %}">
 			<p class="comment_header">
-				From: {% if c.link and c.link != '' %}
+				From: {% if ! c.link.to_s.empty? %}
 					<a href="{{c.link}}">{{c.name}}</a>
 				{% else %}
 					{{c.name}}
@@ -26,7 +26,7 @@
 	<p style="font-style: italic">
 		All comments are held for moderation; basic HTML formatting accepted.
 	</p>
-	<form id="commentform" method="POST" action="{{site.url}}/commentsubmit.php">
+	<form id="commentform" method="POST" action="{{site.url}}/comment">
 		<input type="hidden" name="post_id" value="{{page.id}}" />
 		<input type="hidden" name="return_url" value="{{site.url}}{{page.url}}" />
 		<table>
