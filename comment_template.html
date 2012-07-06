@@ -24,7 +24,7 @@
 	{% endfor %}
 	<h1>Post a comment</h1>
 	<p style="font-style: italic">
-		All comments are held for moderation; basic HTML formatting accepted.
+		All comments are held for moderation. No formatting except newlines allowed.
 	</p>
 	<form id="commentform" method="POST" action="{{site.url}}/comment">
 		<input type="hidden" name="post_id" value="{{page.id}}" />
