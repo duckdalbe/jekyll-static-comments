@@ -44,7 +44,7 @@ mail = Mail.new do
   subject = subject
   body = values.to_yaml
 end
-msg = mail.deliver or puts "Error sending email: #{msg.inspect}"
+msg = mail.deliver or cgi.out("Error sending email: #{msg.inspect}.\n\nPlease inform the owner of this site!")
 
 if (referer = CGI.referer).to_s.empty?
   cgi.out "Your browser does not send referrers and thus we can't automatically send you to the appropriate page that thanks you.<br/> Therefor you see only this naked text and will have to use you browser's controls to return to the post.<br/>Oh, and: Thank you for your comment!"
