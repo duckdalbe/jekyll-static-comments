@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+# Configuration
+emailaddr = 'comments@duckdalbe.org'
+subject = 'New comment to moderate'
+# End of configuration
+
+# TODO: test for required fields and respond helpfully.
+# TODO: Make commentform standalone to include here upon failure.
+# TODO: commentform field for openpgp-key.
+# TODO: commentform field to optionally use name+address from openpgp-key.
+# TODO: commentform use JS to disable not usable fields dynamically.
+# TODO: Verify OpenPGP-signature and skip moderation upon success.
+
+require 'cgi'
+require 'mail'
+require 'yaml'
+
+@cgi = CGI.new
+
+def values
+  # Read in posted content and escape/sanitize a little.
+  values ||= %w(:name :email :link :comment).map do |attrb|
+    # TODO: test emailaddress, link for validity.
+    attrb => CGI.escapeHTML(@cgi[attrb])
+  end
+end
+
+def post_id
+  post_id ||= @cgi[post_id].to_i
+end
+
+# Get referred-to post_id and break if invalid.
+if post_id == 0
+  # Something wrong, probably wrong input.
+  # TODO: More helpful error message.
+  puts :error
+  exit 1
+end
+
+if values.empty?
+  # TODO: external template
+  puts "Thanks for your comment, it was put into the moderation queue."
+  # TODO: proper return-url
+  puts "Meanwhile you can <a href=''>return to the post</a> you've been commenting."
+  exit
+end
+
+mail = Mail.new do
+  from = emailaddr
+  to = emailaddr
+  subject = subject
+  body = values.to_yaml
+end
+msg = mail.deliver or puts "Error sending email: #{msg.inspect}"
+
+redirecturl = "?post_id=#{post_id}"
+cgi.out("nph" => true,
+        "status" => 302,
+        "type" => "text/html",
+        "location" => redirecturl) { "<a href='#{redirecturl}'>#{redirecturl}</a>" }
