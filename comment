@@ -38,14 +38,6 @@ if post_id == 0
   exit 1
 end
 
-if values.empty?
-  # TODO: external template
-  puts "Thanks for your comment, it was put into the moderation queue."
-  # TODO: proper return-url
-  puts "Meanwhile you can <a href=''>return to the post</a> you've been commenting."
-  exit
-end
-
 mail = Mail.new do
   from = emailaddr
   to = emailaddr
@@ -54,7 +46,12 @@ mail = Mail.new do
 end
 msg = mail.deliver or puts "Error sending email: #{msg.inspect}"
 
-redirecturl = "?post_id=#{post_id}"
+if (referer = CGI.referer).to_s.empty?
+  cgi.out "Your browser does not send referrers and thus we can't automatically send you to the appropriate page that thanks you.<br/> Therefor you see only this naked text and will have to use you browser's controls to return to the post.<br/>Oh, and: Thank you for your comment!"
+  exit
+end
+
+redirecturl = referer.sub(/.html$/, '-commentok.html')
 cgi.out("nph" => true,
         "status" => 302,
         "type" => "text/html",
