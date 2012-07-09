@@ -3,6 +3,7 @@
 # Configuration
 emailaddr = 'comments@duckdalbe.org'
 subject = 'New comment to moderate'
+landingurl = '/static/comment_received.html'
 # End of configuration
 
 # TODO: test for required fields and respond helpfully.
@@ -69,7 +70,7 @@ if referer.to_s.empty?
   exit
 end
 
-redirecturl = referer.sub(/.html$/, '-commentok.html')
+redirecturl = landingurl
 respond("status" => "REDIRECT",
         "type" => "text/html",
         "location" => redirecturl) { "<a href='#{redirecturl}'>#{redirecturl}</a>" }
